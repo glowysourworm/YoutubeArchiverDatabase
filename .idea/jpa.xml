@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpaBuddyIdeaProjectConfig" migrateIndexesAndConstraints="true" reUseTableSchema="true">
+    <option name="migrateIndexesAndConstraints" value="true" />
+    <option name="reLastEntityCreationPackage" value="src/main/java/db" />
+    <option name="reverseEngineeringLastDbConnectionId" value="efbbb06b-c228-4fd6-b1c2-7b30e56b9ac9" />
+  </component>
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="YoutubeArchiverDatabase" name="default" framework="JPA" ormUnit="YoutubeArchiverDatabase:default" defaultDataSourceId="efbbb06b-c228-4fd6-b1c2-7b30e56b9ac9" />
+    </persistence-units>
+  </component>
+</project>
