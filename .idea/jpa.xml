@@ -2,7 +2,7 @@
 <project version="4">
   <component name="JpaBuddyIdeaProjectConfig" migrateIndexesAndConstraints="true" reUseTableSchema="true">
     <option name="migrateIndexesAndConstraints" value="true" />
-    <option name="reLastEntityCreationPackage" value="src/main/java/db" />
+    <option name="reLastEntityCreationPackage" value="src/main/java/YoutubeArchiverDatabase/Model" />
     <option name="reverseEngineeringLastDbConnectionId" value="efbbb06b-c228-4fd6-b1c2-7b30e56b9ac9" />
   </component>
   <component name="PersistenceUnitSettings">
