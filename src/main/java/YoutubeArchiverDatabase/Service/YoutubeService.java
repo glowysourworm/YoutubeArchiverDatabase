@@ -1,6 +1,7 @@
 package YoutubeArchiverDatabase.Service;
 
 
+import YoutubeArchiverDatabase.Configuration;
 import YoutubeArchiverDatabase.Model.YoutubeComment;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -17,12 +18,13 @@ import java.util.List;
 
 public class YoutubeService
 {
-    private static String YOUTUBE_API_KEY = "";
+    private final Configuration configuration;
     private final static String YOUTUBE_API_LIST_API_OPTIONS = "snippet,replies";
     private YouTube service;
 
-    public YoutubeService()
+    public YoutubeService(final Configuration config)
     {
+        this.configuration = config;
     }
 
     public void Initialize()
@@ -48,7 +50,7 @@ public class YoutubeService
         {
             var response = service.commentThreads()
                     .list(Collections.singletonList(YOUTUBE_API_LIST_API_OPTIONS))
-                    .setKey(YOUTUBE_API_KEY)
+                    .setKey(this.configuration.youtubeApiKey)
                     .setVideoId(videoId)
                     .execute();
 

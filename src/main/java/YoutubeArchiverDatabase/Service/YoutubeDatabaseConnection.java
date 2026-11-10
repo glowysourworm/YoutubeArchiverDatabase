@@ -1,16 +1,23 @@
 package YoutubeArchiverDatabase.Service;
 
+import YoutubeArchiverDatabase.Configuration;
 import YoutubeArchiverDatabase.Model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class YoutubeDatabaseConnection {
+public class YoutubeDatabaseConnection
+{
+    private final Configuration configuration;
+
+    public YoutubeDatabaseConnection(Configuration config)
+    {
+        this.configuration = config;
+    }
 
     /// Gets a comment from the database
     /// @param id The primary key id of the database entity
@@ -227,6 +234,7 @@ public class YoutubeDatabaseConnection {
 
     public boolean ExecuteDB(Consumer<Session> callback)
     {
+        // Hibernate Configuration
         var configuration = GetConfiguration();
 
         // Create Session Factory and auto-close with try-with-resources.
@@ -251,12 +259,12 @@ public class YoutubeDatabaseConnection {
         }
     }
 
-    private Configuration GetConfiguration()
+    private org.hibernate.cfg.Configuration GetConfiguration()
     {
-        var configuration = new Configuration();
+        var configuration = new org.hibernate.cfg.Configuration();
 
         configuration.setJdbcUrl("");
-        configuration.setCredentials("root", "!ngndol234");
+        configuration.setCredentials(this.configuration.databaseHost, this.configuration.databasePassword);
         configuration.addAnnotatedClass(YoutubeComment.class);
 
         return configuration;
