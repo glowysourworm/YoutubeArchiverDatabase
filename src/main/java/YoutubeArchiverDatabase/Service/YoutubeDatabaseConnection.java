@@ -234,15 +234,14 @@ public class YoutubeDatabaseConnection
 
     public boolean ExecuteDB(Consumer<Session> callback)
     {
-        // Hibernate Configuration
-        var configuration = GetConfiguration();
-
-        // Create Session Factory and auto-close with try-with-resources.
-        try(SessionFactory sessionFactory = configuration.buildSessionFactory())
+        // Create Session (+Factory) and auto-close with try-with-resources.
+        try(var session = OpenDB())
         {
-
-            // Initialize Session Object
-            var session = sessionFactory.openSession();
+            if (session == null)
+            {
+                System.out.println("Error with database configuration");
+                return false;
+            }
 
             session.beginTransaction();
 
@@ -259,14 +258,45 @@ public class YoutubeDatabaseConnection
         }
     }
 
-    private org.hibernate.cfg.Configuration GetConfiguration()
+    private Session OpenDB()
     {
-        var configuration = new org.hibernate.cfg.Configuration();
+        // Configuration:  Some parts are in hibernate.cfg.xml. The other parts that depend on
+        //                 user settings are applied here.
+        //
+        var configuration = new org.hibernate.cfg.Configuration().configure();
 
-        configuration.setJdbcUrl("");
-        configuration.setCredentials(this.configuration.databaseHost, this.configuration.databasePassword);
-        configuration.addAnnotatedClass(YoutubeComment.class);
+        try
+        {
+            // Format:  Host, Port, Database
+            var jdbcUrlFormat = "jdbc:mariadb://%1s:%2d/%3s";
 
-        return configuration;
+            configuration.setJdbcUrl(String.format(jdbcUrlFormat, this.configuration.databaseHost, this.configuration.databasePort, "YoutubeArchiver"));
+            configuration.setCredentials(this.configuration.databaseUser, this.configuration.databasePassword);
+
+            // ORM Classes
+            configuration.addAnnotatedClass(LocalComment.class);
+            configuration.addAnnotatedClass(YoutubeChannel.class);
+            configuration.addAnnotatedClass(YoutubeComment.class);
+            configuration.addAnnotatedClass(YoutubeCommentHistorical.class);
+            configuration.addAnnotatedClass(YoutubeUser.class);
+            configuration.addAnnotatedClass(YoutubeUserChannelMap.class);
+            configuration.addAnnotatedClass(YoutubeVideo.class);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+
+        try(var sessionFactory = configuration.buildSessionFactory())
+        {
+            return sessionFactory.openSession();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

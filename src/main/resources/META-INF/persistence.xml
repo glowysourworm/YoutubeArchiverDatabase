@@ -4,5 +4,13 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
     <persistence-unit name="default">
+        <properties>
+            <property name="hibernate.connection.pool_size" value="10" />
+            <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver" />
+            <property name="show_sql" value="true" />
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.connection.provider_class" value="org.hibernate.c3p0.internal.C3P0ConnectionProvider" />
+        </properties>
     </persistence-unit>
+
 </persistence>

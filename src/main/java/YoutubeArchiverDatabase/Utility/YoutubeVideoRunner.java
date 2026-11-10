@@ -1,13 +1,11 @@
 package YoutubeArchiverDatabase.Utility;
 
 import YoutubeArchiverDatabase.Configuration;
-import YoutubeArchiverDatabase.Model.YoutubeComment;
 import YoutubeArchiverDatabase.Utility.UtilityModel.YoutubeVideoDownloaderMetadata;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.FileReader;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -18,12 +16,15 @@ import java.util.List;
 public class YoutubeVideoRunner extends ShellRunner
 {
     private static final String EXECUTABLE_NAME = "yt-dlp";
-    private static final String YOUTUBE_VIDEO_DOWNLOADER_WRITE_METADATA_OPT = "--write-info-json";
-    private static final String YOUTUBE_VIDEO_DOWNLOADER_SKIP_VIDEO_OPT = "--skip-video";
-    private static final String YOUTUBE_VIDEO_DOWNLOADER_FORMAT_OPT = "-f";
-    private static final String YOUTUBE_VIDEO_DOWNLOADER_FORMAT_DEFAULT = "best";
+    private static final String USER_NAME_OPTION = "-u";
+    private static final String PASSWORD_OPTION = "-p";
+    private static final String LOGIN_OPTION = "--cookies-from-browser";
+    private static final String WRITE_METADATA_OPTION = "--write-info-json";
+    private static final String SKIP_VIDEO_OPTION = "--skip-video";
+    private static final String FORMAT_OPTION = "-f";
+    private static final String FORMAT_DEFAULT = "best";
     // private static final String YOUBUTE_VIDEO_DOWNLOADER_NO_MERGE_OPT = "--no-video-multistreams";
-    private static final String YOUTUBE_VIDEO_DOWNLOADER_APPLICATION_OPT = "--js-runtimes node --remote-components ejs:github";
+    private static final String APPLICATION_OPTION = "--js-runtimes node --remote-components ejs:github";
 
     // Application Configuration
     private final Configuration configuration;
@@ -204,21 +205,31 @@ public class YoutubeVideoRunner extends ShellRunner
         var commandLine = new ArrayList<String>();
 
         // Process: yt-dlp (https://github.com/yt-dlp/yt-dlp)
-        // commandLine.add(YOUTUBE_VIDEO_DOWNLOADER);
+
+//        // Option: User Name
+//        commandLine.add(USER_NAME_OPTION);
+//        commandLine.add(this.configuration.youtubePrimaryUser);
+//
+//        // Option: User Password
+//        commandLine.add(PASSWORD_OPTION);
+//        commandLine.add(this.configuration.youtubePrimaryPassword);
+
+        // Option:  Login / Authentication
+        //commandLine.add(LOGIN_OPTION);
 
         // Option:  Write Json Info
-        commandLine.add(YOUTUBE_VIDEO_DOWNLOADER_WRITE_METADATA_OPT);
+        commandLine.add(WRITE_METADATA_OPTION);
 
         // Option:  Skip Video
         if (!includeVideo)
-            commandLine.add(YOUTUBE_VIDEO_DOWNLOADER_SKIP_VIDEO_OPT);
+            commandLine.add(SKIP_VIDEO_OPTION);
 
         // Option:  Format (default to mp4)
 //        commandLine.add(YOUTUBE_VIDEO_DOWNLOADER_FORMAT_OPT);
 //        commandLine.add(YOUTUBE_VIDEO_DOWNLOADER_FORMAT_DEFAULT);
 
         // Option:  Application Related Options (nodejs, ffmpeg, are required)
-        commandLine.add(YOUTUBE_VIDEO_DOWNLOADER_APPLICATION_OPT);
+        commandLine.add(APPLICATION_OPTION);
 
         // Video Target (URL | Video ID)
         commandLine.add(videoId);

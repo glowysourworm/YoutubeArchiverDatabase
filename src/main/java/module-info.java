@@ -6,7 +6,6 @@ module YoutubeArchiverDatabase {
     requires google.api.client;
     requires com.google.api.client;
     requires com.google.api.client.json.gson;
-    requires jakarta.xml.bind;
 
     exports YoutubeArchiverDatabase.Model;
     exports YoutubeArchiverDatabase.Service;
