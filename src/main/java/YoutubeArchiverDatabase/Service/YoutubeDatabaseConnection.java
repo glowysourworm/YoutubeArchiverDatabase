@@ -1,7 +1,9 @@
 package YoutubeArchiverDatabase.Service;
 
 import YoutubeArchiverDatabase.Configuration;
+import YoutubeArchiverDatabase.Logging.LogMessage;
 import YoutubeArchiverDatabase.Model.*;
+import YoutubeArchiverDatabase.Utility.ApplicationHelpers;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import tools.jackson.databind.ObjectMapper;
@@ -77,6 +79,7 @@ public class YoutubeDatabaseConnection
             // Add
             if (comment == null)
             {
+                ApplicationHelpers.Log(LogMessage.Info("Adding YoutubeComment entity to database:  %1s", commentData.getId()));
                 session.persist(commentData);
             }
 
@@ -89,6 +92,8 @@ public class YoutubeDatabaseConnection
                 // -> Create Comment History
                 if (!oldHashValue.equals(newHashValue))
                 {
+                    ApplicationHelpers.Log(LogMessage.Info("Updating YoutubeComment entity (moving current to historical comment):  %1s", comment.getId()));
+
                     // Create Historical Comment
                     var historicalComment = new YoutubeCommentHistorical();
 
@@ -98,6 +103,8 @@ public class YoutubeDatabaseConnection
                     historicalComment.setHashValue(YoutubeEntityHashCalculator.CreateHashValue(comment));   // Calculate hash value
                     historicalComment.setDateCreated(Instant.now());
 
+                    ApplicationHelpers.Log(LogMessage.Info("Persisting YoutubeCommentHistorical:  %1s", historicalComment.getId()));
+
                     // Persist Comment History
                     session.persist(historicalComment);
 
@@ -106,6 +113,8 @@ public class YoutubeDatabaseConnection
 
                     // Map properties to new YoutubeComment
                     comment = mapper.convertValue(commentData, YoutubeComment.class);
+
+                    ApplicationHelpers.Log(LogMessage.Info("Persisting YoutubeComment:  %1s", historicalComment.getId()));
 
                     // Persist the entity (update)
                     session.persist(comment);
@@ -128,6 +137,7 @@ public class YoutubeDatabaseConnection
             // Add
             if (user == null)
             {
+                ApplicationHelpers.Log(LogMessage.Info("Adding YoutubeUser entity to database:  %1s", userData.getId()));
                 session.persist(userData);
             }
 
@@ -140,6 +150,8 @@ public class YoutubeDatabaseConnection
                 // -> User Changes
                 if (!oldHashValue.equals(newHashValue))
                 {
+                    ApplicationHelpers.Log(LogMessage.Info("Updating YoutubeUser entity:  %1s", user.getId()));
+
                     // Map properties to new YoutubeUser
                     var mapper = new ObjectMapper();
 
@@ -167,6 +179,7 @@ public class YoutubeDatabaseConnection
             // Add
             if (channel == null)
             {
+                ApplicationHelpers.Log(LogMessage.Info("Adding YoutubeChannel entity to database:  %1s", channelData.getId()));
                 session.persist(channelData);
             }
 
@@ -179,6 +192,8 @@ public class YoutubeDatabaseConnection
                 // -> Channel Changes
                 if (!oldHashValue.equals(newHashValue))
                 {
+                    ApplicationHelpers.Log(LogMessage.Info("Updating YoutubeChannel entity:  %1s", channel.getId()));
+
                     // Map properties to new YoutubeUser
                     var mapper = new ObjectMapper();
 
@@ -206,6 +221,7 @@ public class YoutubeDatabaseConnection
             // Add
             if (video == null)
             {
+                ApplicationHelpers.Log(LogMessage.Info("Adding YoutubeVideo entity to database:  %1s", videoData.getId()));
                 session.persist(videoData);
             }
 
@@ -218,6 +234,8 @@ public class YoutubeDatabaseConnection
                 // -> Channel Changes
                 if (!oldHashValue.equals(newHashValue))
                 {
+                    ApplicationHelpers.Log(LogMessage.Info("Updating YoutubeVideo entity:  %1s", video.getId()));
+
                     // Map properties to new YoutubeVideo
                     var mapper = new ObjectMapper();
 
@@ -237,11 +255,9 @@ public class YoutubeDatabaseConnection
         // Create Session (+Factory) and auto-close with try-with-resources.
         try(var session = OpenDB())
         {
+            // Logging already happened
             if (session == null)
-            {
-                System.out.println("Error with database configuration");
                 return false;
-            }
 
             session.beginTransaction();
 
@@ -267,6 +283,8 @@ public class YoutubeDatabaseConnection
 
         try
         {
+            ApplicationHelpers.Log(LogMessage.Info("Configuring database connection..."));
+
             // Format:  Host, Port, Database
             var jdbcUrlFormat = "jdbc:mariadb://%1s:%2d/%3s";
 
@@ -281,20 +299,32 @@ public class YoutubeDatabaseConnection
             configuration.addAnnotatedClass(YoutubeUser.class);
             configuration.addAnnotatedClass(YoutubeUserChannelMap.class);
             configuration.addAnnotatedClass(YoutubeVideo.class);
+
+            ApplicationHelpers.Log(LogMessage.Info("Database configuration complete!"));
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            ApplicationHelpers.Log(LogMessage.Error("Error configuring database connection", e));
             return null;
         }
 
         try(var sessionFactory = configuration.buildSessionFactory())
         {
-            return sessionFactory.openSession();
+            ApplicationHelpers.Log(LogMessage.Info("Opening database session..."));
+
+            var session = sessionFactory.openSession();
+
+            if (session != null)
+                ApplicationHelpers.Log(LogMessage.Info("Database session open successfully:  " + session.toString()));
+
+            else
+                ApplicationHelpers.Log(LogMessage.Info("Unknown error creating database session!"));
+
+            return session;
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            ApplicationHelpers.Log(LogMessage.Error("Error creating database session", e));
         }
 
         return null;

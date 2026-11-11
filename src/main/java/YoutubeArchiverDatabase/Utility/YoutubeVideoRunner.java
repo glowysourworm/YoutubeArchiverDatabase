@@ -1,6 +1,7 @@
 package YoutubeArchiverDatabase.Utility;
 
 import YoutubeArchiverDatabase.Configuration;
+import YoutubeArchiverDatabase.Logging.LogMessage;
 import YoutubeArchiverDatabase.Utility.UtilityModel.YoutubeVideoDownloaderMetadata;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
@@ -81,7 +82,7 @@ public class YoutubeVideoRunner extends ShellRunner
         // Initialize
         if (!super.Initialize())
         {
-            System.out.println("Error initializing youtube-comment-downloader:  process halted");
+            ApplicationHelpers.Log(LogMessage.Error("Error initializing youtube-comment-downloader:  process halted"));
             return this.results;
         }
 
@@ -90,7 +91,7 @@ public class YoutubeVideoRunner extends ShellRunner
         // Process Command Line -> (results created locally during post run)
         if (!super.Run(commandLine))
         {
-            System.out.println("Error running youtube-comment-downloader:  process halted");
+            ApplicationHelpers.Log(LogMessage.Error("Error running youtube-comment-downloader:  process halted"));
             return this.results;
         }
 
@@ -103,8 +104,7 @@ public class YoutubeVideoRunner extends ShellRunner
         }
         catch (Exception e)
         {
-            System.out.println("Error deleting temp directory for youtube-comment-downloader:  process halted");
-            e.printStackTrace();
+            ApplicationHelpers.Log(LogMessage.Error("Error deleting temp directory for youtube-comment-downloader:  process halted", e));
 
             return this.results;
         }
@@ -140,7 +140,7 @@ public class YoutubeVideoRunner extends ShellRunner
             // Failure: Missing file(s)
             if (jsonFile.toString().isEmpty())
             {
-                System.out.println("Missing video info json file (from yt-dlp output directory)");
+                ApplicationHelpers.Log(LogMessage.Error("Missing video info json file (from yt-dlp output directory)"));
                 return false;
             }
 
@@ -175,7 +175,7 @@ public class YoutubeVideoRunner extends ShellRunner
                 // Failure: Missing file(s)
                 if (videoFile.toString().isEmpty())
                 {
-                    System.out.println("Missing video file (from yt-dlp output directory)");
+                    ApplicationHelpers.Log(LogMessage.Error("Missing video file (from yt-dlp output directory)"));
                     return false;
                 }
 
@@ -190,8 +190,7 @@ public class YoutubeVideoRunner extends ShellRunner
         }
         catch (Exception e)
         {
-            // Log Error
-            e.printStackTrace();
+            ApplicationHelpers.Log(LogMessage.Error(String.format("Error running %1s", EXECUTABLE_NAME), e));
         }
 
         return false;

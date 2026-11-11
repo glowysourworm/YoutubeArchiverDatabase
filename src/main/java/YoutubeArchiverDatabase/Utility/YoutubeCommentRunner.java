@@ -1,6 +1,7 @@
 package YoutubeArchiverDatabase.Utility;
 
 import YoutubeArchiverDatabase.Configuration;
+import YoutubeArchiverDatabase.Logging.LogMessage;
 import YoutubeArchiverDatabase.Model.YoutubeComment;
 import YoutubeArchiverDatabase.Service.YoutubeDatabaseConnection;
 import YoutubeArchiverDatabase.Utility.UtilityModel.YoutubeCommentDownloaderData;
@@ -27,7 +28,7 @@ public class YoutubeCommentRunner extends ShellRunner
     private static final String EXECUTABLE_NAME = "youtube-comment-downloader";
 
     // Application Configuration
-    private Configuration configuration;
+    private final Configuration configuration;
 
     /// File that stores the resulting comments
     private Path resultFile;
@@ -72,14 +73,14 @@ public class YoutubeCommentRunner extends ShellRunner
         // Initialize
         if (!super.Initialize())
         {
-            System.out.println("Error initializing youtube-comment-downloader:  process halted");
+            ApplicationHelpers.Log(LogMessage.Error("Error initializing youtube-comment-downloader:  process halted"));
             return this.results;
         }
 
         // Result File
         if (!CreateResultFile(super.GetExecutableTempDirectory()))
         {
-            System.out.println("Error initializing youtube-comment-downloader:  process halted");
+            ApplicationHelpers.Log(LogMessage.Error("Error initializing youtube-comment-downloader:  process halted"));
             return this.results;
         }
 
@@ -91,7 +92,7 @@ public class YoutubeCommentRunner extends ShellRunner
         // Run Error
         if (!result)
         {
-            System.out.println("Error running youtube-comment-downloader:  process halted");
+            ApplicationHelpers.Log(LogMessage.Error("Error running youtube-comment-downloader:  process halted"));
             return this.results;
         }
 
@@ -106,9 +107,7 @@ public class YoutubeCommentRunner extends ShellRunner
         }
         catch (Exception e)
         {
-            System.out.println("Error deleting temp directory for youtube-comment-downloader:  process halted");
-            e.printStackTrace();
-
+            ApplicationHelpers.Log(LogMessage.Error("Error deleting temp directory for youtube-comment-downloader:  process halted", e));
             return this.results;
         }
 
@@ -128,7 +127,7 @@ public class YoutubeCommentRunner extends ShellRunner
         }
         catch (IllegalArgumentException e)
         {
-            e.printStackTrace();
+            ApplicationHelpers.Log(LogMessage.Error(String.format("Error creating file for shell application %1s", EXECUTABLE_NAME), e));
             return false;
         }
     }
@@ -223,11 +222,12 @@ public class YoutubeCommentRunner extends ShellRunner
                 this.results.add(comment);
             }
 
+            ApplicationHelpers.Log(LogMessage.Info(String.format("Comments Read by %1s:  %2d", EXECUTABLE_NAME, this.results.size())));
             return true;
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            ApplicationHelpers.Log(LogMessage.Error("Error accessing Youtube Archiver database", e));
         }
 
         return false;

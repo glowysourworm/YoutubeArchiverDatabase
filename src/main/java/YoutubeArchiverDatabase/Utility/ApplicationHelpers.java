@@ -1,11 +1,45 @@
 package YoutubeArchiverDatabase.Utility;
 
+import YoutubeArchiverDatabase.Logging.ILogger;
+import YoutubeArchiverDatabase.Logging.LogMessage;
+import YoutubeArchiverDatabase.Logging.SimpleLogger;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ApplicationHelpers
 {
+    private static ILogger<LogMessage> applicationLogger;
+
+    /// Gets primary application logger
+    public static ILogger<LogMessage> GetLogger()
+    {
+        if (ApplicationHelpers.applicationLogger == null)
+            ApplicationHelpers.applicationLogger = new SimpleLogger<>();
+
+        return ApplicationHelpers.applicationLogger;
+    }
+
+    /// Logs messsage with primary application logger
+    public static void Log(LogMessage logMessage)
+    {
+        if (ApplicationHelpers.applicationLogger == null)
+            ApplicationHelpers.applicationLogger = new SimpleLogger<>();
+
+        ApplicationHelpers.applicationLogger.Log(logMessage);
+    }
+
+    /// Gets current log from application logger
+    public static List<LogMessage> GetLogs()
+    {
+        if (ApplicationHelpers.applicationLogger == null)
+            ApplicationHelpers.applicationLogger = new SimpleLogger<>();
+
+        return ApplicationHelpers.applicationLogger.GetLogs();
+    }
+
     /// Returns working directory for the application as an absolute path
     /// @return Working directory as absolute path
     public static Path GetWorkingDirectory()

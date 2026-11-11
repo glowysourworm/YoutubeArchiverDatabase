@@ -1,5 +1,9 @@
 package YoutubeArchiverDatabase.Utility;
 
+import YoutubeArchiverDatabase.Logging.LogMessage;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -235,7 +239,7 @@ public abstract class ShellRunner
             // Pre-run Failure!
             if (!prerunResult)
             {
-                System.out.println("Execution halted due to user code:  ShellRunner Pre-run failure");
+                ApplicationHelpers.Log(LogMessage.Error("Execution halted due to user code:  ShellRunner Pre-run failure"));
                 return false;
             }
 
@@ -253,13 +257,26 @@ public abstract class ShellRunner
 
             // Options:  Working Directory, Inherit IO (console)
             builder.directory(this.executableTempDirectory.toFile());
-            builder.inheritIO();
 
             // -> Start
             var process = builder.start();
+
+            // Output Stream:  Re-directing the stream bypasses the System.setOut / System.setErr we did in
+            //                 MainApplication. (why set them at all?!)
+            //
+            try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream())))
+            {
+                String line;
+                while ((line = reader.readLine()) != null)
+                {
+                    //System.out.println(line); // This will respect any System.setOut() modifications
+                    System.out.println(this.executableName + ": \t\t" + line);
+                }
+            }
+
             int exitCode = process.waitFor();
 
-            System.out.println("Exited with error code : " + exitCode);
+            ApplicationHelpers.Log(LogMessage.Info("Exited with error code : " + exitCode));
 
             // Close Process
             process.destroyForcibly();
@@ -270,8 +287,8 @@ public abstract class ShellRunner
             // Post-run Failure!
             if (!postrunResult)
             {
-                System.out.println("Execution halted due to user code:  ShellRunner Post-run failure");
-                System.out.println("Execution halted due to user code:  The process otherwise exited with code " + exitCode);
+                ApplicationHelpers.Log(LogMessage.Error("Execution halted due to user code:  ShellRunner Post-run failure"));
+                ApplicationHelpers.Log(LogMessage.Error("Execution halted due to user code:  The process otherwise exited with code " + exitCode));
                 return false;
             }
 
@@ -279,7 +296,7 @@ public abstract class ShellRunner
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            ApplicationHelpers.Log(LogMessage.Error("ShellRunner has encountered an unexpected error", e));
         }
 
         return false;
