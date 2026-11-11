@@ -10,6 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -148,6 +149,13 @@ public class YoutubeCommentRunner extends ShellRunner
 
         // Clear List
         this.results = new ArrayList<>();
+
+        // Check that comments file was created. There may not have been any comments - in which
+        // case the youtube-comment-downloader does not create a file
+        if (!Files.exists(this.resultFile))
+        {
+            return true;
+        }
 
         // Post Run Callback:  Parse the JSON output
         //

@@ -249,6 +249,9 @@ public abstract class ShellRunner
                 return seed + " " + current;
             });
 
+            // Log Official Command Line
+            ApplicationHelpers.Log(LogMessage.Info("Executing Shell Command:  " + commandLine));
+
             // Typically this kind of constructor would throw some kind of exception.. but probably not
             // the way this class was built since Java's try-catch-with-resources was made for
             // that purpose.
