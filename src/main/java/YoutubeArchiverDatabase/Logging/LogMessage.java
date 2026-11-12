@@ -16,14 +16,14 @@ public class LogMessage
         this.Message = "";
         this.Error = null;
         this.Level = LogLevel.Info;
-        this.Timestamp = Instant.now().atOffset(ZoneOffset.UTC);
+        this.Timestamp = Instant.now().atOffset(OffsetDateTime.now().getOffset());
     }
     public LogMessage(String message, LogLevel level, Throwable error)
     {
         this.Message = message;
         this.Level = level;
         this.Error = error;
-        this.Timestamp = Instant.now().atOffset(ZoneOffset.UTC);
+        this.Timestamp = Instant.now().atOffset(OffsetDateTime.now().getOffset());
     }
 
     public static LogMessage Info(String message)

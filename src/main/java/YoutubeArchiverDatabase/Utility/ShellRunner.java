@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 public abstract class ShellRunner
@@ -260,6 +262,7 @@ public abstract class ShellRunner
 
             // Options:  Working Directory, Inherit IO (console)
             builder.directory(this.executableTempDirectory.toFile());
+            builder.redirectErrorStream(true);
 
             // -> Start
             var process = builder.start();
@@ -267,16 +270,24 @@ public abstract class ShellRunner
             // Output Stream:  Re-directing the stream bypasses the System.setOut / System.setErr we did in
             //                 MainApplication. (why set them at all?!)
             //
+
+            // Input (oUtpuT) Stream:  Read this and look for hash values in the error lines
             try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream())))
             {
                 String line;
+
                 while ((line = reader.readLine()) != null)
                 {
-                    //System.out.println(line); // This will respect any System.setOut() modifications
-                    System.out.println(this.executableName + ": \t\t" + line);
+                    if (line.isBlank())
+                        continue;
+
+                    if (line.toLowerCase().contains("error"))
+                        ApplicationHelpers.Log(LogMessage.Error(this.executableName + ": \t\t" + line));
+
+                    else
+                        ApplicationHelpers.Log(LogMessage.Info(this.executableName + ": \t\t" + line));
                 }
             }
-
             int exitCode = process.waitFor();
 
             ApplicationHelpers.Log(LogMessage.Info("Exited with error code : " + exitCode));

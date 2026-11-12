@@ -29,6 +29,9 @@ public class ApplicationHelpers
             ApplicationHelpers.applicationLogger = new SimpleLogger<>();
 
         ApplicationHelpers.applicationLogger.Log(logMessage);
+
+        // -> Apply to console output
+        System.out.println(logMessage.Message);
     }
 
     /// Gets current log from application logger

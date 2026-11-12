@@ -16,15 +16,68 @@ import java.util.List;
 /// ShellRunner for the yt-dlp application [...](https://github.com/yt-dlp/yt-dlp)
 public class YoutubeVideoRunner extends ShellRunner
 {
+    /*
+     *   yt-dlp:  Youtube Audio / Video Downloader
+     *
+     *   Use Case 1:  Extract Youtube Channel Videos:  List of video id's in an output file
+     *   Use Case 2:  Extract Video Metadata:  .json file of fields related to the video
+     *   Use Case 3:  Download Audo / Video
+     *
+     *   Issues:  Authentication / Cookies  (most of the time there aren't issues; but some commands work and some don't)
+     *
+     *       - Cookies 1:  A browser challenge may be issued that requires authentication. You may add a cookies.txt file
+     *                     to the bin directory (this would not be desired on the user end). There are browser extensions
+     *                     to accomplish getting the cookies file out.
+     *
+     *                     --cookies {cookies.txt}      (this option may be used; but not liked)
+     *
+     *       - Cookies 2:  Authenticate using your browser - and leave it open. (Not a terrible option)
+     *
+     *       - Cookies 3:  Use a command that looks for your cookies file from the browser. This has security issues that
+     *                     are still open; but there may be a way to help development of these along... that's a simple
+     *                     issue to fix.
+     *
+     *                     --cookies-from-browser {browser name}
+     *
+     *                     Supported Browsers [brave, chrome, chromium, edge, firefox, opera, safari, vivaldi, whale]
+     *
+     *                     Known Issue:  https://github.com/yt-dlp/yt-dlp/issues/7271
+     *
+     *                     Chrome-based browsers currently have trouble with this option; but there is a plugin to solve
+     *                     it.
+     *
+     *         Workaround: ChromeCookieUnlock  (yt-dlp plugin)
+     *
+     *   Use Cases
+     *   ---------
+     *
+     *   For each use case it is assumed that you will require browser cookies to authenticate. The rest of the command
+     *   line will be how to accomplish the task of the use case.
+     *
+     *   Also default (application) options: --js-runtimes node, --remote-components ejs:github
+     *
+     *   The JS runtime will be needed for browser automation; and the remote components was recommended as a way to
+     *   handle browser challenges - which will fetch requirements from online.
+     *
+     *   Use Case 1:  yt-dlp --flat-playlist --print id {channelId | channelUrl}
+     *
+     *       - Flat Playlist:  Significantly reduces the run-time (more investigation needed)
+     *       - Print Command:  There could be other fields available; but this will print the video id
+     *
+     *   Use Case 2: yt-dlp --write-info-json --write-subs --write-description --write-comments  --skip-download {videoId | videoUrl}
+     *
+     *       - Write Info Json:        Option to write as a JSON file (recommended) (we have setup metadata class mapping)
+     *       - Write Subtitle File:    Option to write a file that describes subtitles (optional when downloading video)
+     *       - Write Description File: Option to write a file that contains the video description
+     *       - Write Comments File:    Option to write a file that contains the comments (NEEDS TO BE REVIEWED)
+     *       - Skip Download:  Does not download a video file
+     *
+     *   Use Case 3: yt-dlp [--extract-audio] {videoId | videoUrl}
+     */
+
     private static final String EXECUTABLE_NAME = "yt-dlp";
-    private static final String USER_NAME_OPTION = "-u";
-    private static final String PASSWORD_OPTION = "-p";
-    private static final String LOGIN_OPTION = "--cookies-from-browser";
     private static final String WRITE_METADATA_OPTION = "--write-info-json";
     private static final String SKIP_VIDEO_OPTION = "--skip-video";
-    private static final String FORMAT_OPTION = "-f";
-    private static final String FORMAT_DEFAULT = "best";
-    // private static final String YOUBUTE_VIDEO_DOWNLOADER_NO_MERGE_OPT = "--no-video-multistreams";
     private static final String APPLICATION_OPTION = "--js-runtimes node --remote-components ejs:github";
 
     // Application Configuration

@@ -7,7 +7,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+/// Thread-safe simple logger
 public class SimpleLogger<T extends LogMessage> implements ILogger<T>
 {
     private final List<T> logMessages;
@@ -19,8 +21,8 @@ public class SimpleLogger<T extends LogMessage> implements ILogger<T>
 
     public SimpleLogger()
     {
-        this.logMessages = new ArrayList<>();
-        this.logs = new ArrayList<>();
+        this.logMessages = new CopyOnWriteArrayList<>();
+        this.logs = new CopyOnWriteArrayList<>();
     }
 
     /// Returns log messages for output
@@ -82,6 +84,5 @@ public class SimpleLogger<T extends LogMessage> implements ILogger<T>
 
             return String.format(MESSAGE_FORMAT, formatter.format(logMessage.Timestamp), logMessage.Level.toString(), fullMessage);
         }
-
     }
 }
