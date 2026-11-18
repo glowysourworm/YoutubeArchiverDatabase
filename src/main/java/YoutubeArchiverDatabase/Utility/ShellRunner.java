@@ -7,10 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 public abstract class ShellRunner
 {
@@ -174,7 +171,13 @@ public abstract class ShellRunner
     /// @throws IllegalStateException
     protected boolean Run(String...arguments) throws IllegalStateException
     {
-        return RunImpl(Arrays.stream(arguments));
+        // User's Command Line (with the shell command)
+        var commandLine = Arrays.stream(arguments).reduce(this.executablePath.toString(), (seed, current) ->
+        {
+            return seed + " " + current;
+        });
+
+        return RunImpl(commandLine);
     }
 
     /// Runs the user's command line
@@ -183,7 +186,13 @@ public abstract class ShellRunner
     /// @throws IllegalStateException
     protected boolean Run(List<String> arguments) throws IllegalStateException
     {
-        return RunImpl(arguments.stream());
+        // User's Command Line (with the shell command)
+        var commandLine = arguments.stream().reduce(this.executablePath.toString(), (seed, current) ->
+        {
+            return seed + " " + current;
+        });
+
+        return RunImpl(commandLine);
     }
 
     /// Resets state of runner. Throws exception if there is an unhandled exception related to the working
@@ -213,7 +222,7 @@ public abstract class ShellRunner
     }
 
 
-    private boolean RunImpl(Stream<String> arguments)
+    private boolean RunImpl(String commandLine)
     {
         if (!this.initialized)
             throw new IllegalStateException("Trying to run un-initialized ShellRunner instance");
@@ -244,12 +253,6 @@ public abstract class ShellRunner
                 ApplicationHelpers.Log(LogMessage.Error("Execution halted due to user code:  ShellRunner Pre-run failure"));
                 return false;
             }
-
-            // User's Command Line (with the shell command)
-            var commandLine = arguments.reduce(this.executablePath.toString(), (seed, current) ->
-            {
-                return seed + " " + current;
-            });
 
             // Log Official Command Line
             ApplicationHelpers.Log(LogMessage.Info("Executing Shell Command:  " + commandLine));

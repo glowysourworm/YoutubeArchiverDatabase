@@ -124,7 +124,7 @@ public class ApplicationHelpers
     {
         try
         {
-            var paths = System.getenv("PATH").split(";");
+            var paths = StringUtility.Split(System.getenv("PATH"),";", StringSplitOptions.RemoveEmptyEntries);
 
             for (var path : paths)
             {

@@ -14,4 +14,5 @@ module YoutubeArchiverDatabase {
     exports YoutubeArchiverDatabase;
     exports YoutubeArchiverDatabase.Event;
     exports YoutubeArchiverDatabase.Logging;
+    exports YoutubeArchiverDatabase.Utility.UtilityModel.YoutubeDownloader;
 }

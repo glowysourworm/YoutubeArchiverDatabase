@@ -248,7 +248,7 @@ public class YoutubeCommentRunner extends ShellRunner
     /// @return success / failure
     private boolean ParseCommentIds(String cid, StringBuilder parentId, StringBuilder commentId)
     {
-        var threadIDParts = cid.split("\\.");
+        var threadIDParts = StringUtility.Split(cid, ".", StringSplitOptions.TrimEnds);
 
         // Next-to-Last ID
         if (threadIDParts.length > 1)

@@ -72,7 +72,12 @@ public final class YoutubeEntityHashCalculator
         }
         else
         {
-            return String.valueOf(Objects.hash(video.getDescription(), video.getImageURL(), video.getTitle()));
+            // Field Values:  see yt-dlp. this data is kept online; and will be consistent with the method of download.
+            return String.valueOf(Objects.hash(video.getDescription(),
+                                               video.getImageURL(),
+                                               video.getTitle(),
+                                               video.getDateCreated(),
+                                               video.getDateModified()));
         }
     }
 }
