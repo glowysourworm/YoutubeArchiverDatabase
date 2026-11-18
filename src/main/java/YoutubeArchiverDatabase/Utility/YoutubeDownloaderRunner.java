@@ -13,6 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /// ShellRunner for the yt-dlp application [...](https://github.com/yt-dlp/yt-dlp)
@@ -217,12 +220,13 @@ public abstract class YoutubeDownloaderRunner<T, TInit> extends ShellRunner impl
         if (!super.Run(argumentString))
         {
             ApplicationHelpers.Log(LogMessage.Error("Error running yt-dlp:  process halted"));
-            return false;
         }
 
         // Run Notifiers
         try
         {
+            ApplicationHelpers.Log(LogMessage.Info("Notifying yt-dlp service listeners"));
+
             // -> IServiceNotifier
             Notify();
         }
@@ -234,6 +238,8 @@ public abstract class YoutubeDownloaderRunner<T, TInit> extends ShellRunner impl
         // Reset (cleanup)
         try
         {
+            ApplicationHelpers.Log(LogMessage.Info("Cleaning up yt-dlp shell temp data"));
+
             super.Reset();
         }
         catch (Exception e)
@@ -283,40 +289,52 @@ public abstract class YoutubeDownloaderRunner<T, TInit> extends ShellRunner impl
     }
 
     /// Verifies the video / audio download from the executable temp directory and returns the path to the
-    /// result after moving the file to the youtube data directory specified in the Configuration. This requires
-    /// that the metadata is present (see ParseVideoMetadata)
+    /// result after moving the file to the youtube data directory specified in the Configuration.
     /// @param executableTempDirectory Temp directory for the shell run
     /// @return Path to the moved file
     /// @throws Exception Any exceptions related to file parsing, location, copying and deleting.
-    protected Path VerifyAndMoveVideoResult(Path executableTempDirectory) throws Exception
+    protected Path VerifyAndMoveProduct(Path executableTempDirectory) throws Exception
     {
-        // Video Metadata:  Required to know the file was downloaded properly; and to get its extension.
+        // NOTE*** Only two files should be present in the output directory. There will be a metadata
+        // file (.info.json), and an audio / video file (unknown extension)
         //
-        var metadata = ParseVideoMetadata(executableTempDirectory);
 
-        if (metadata == null)
+        // Validate:  1) Two files in the directory; 2) One file is named *.info.json
+        //
+        var metadataFileFound = new AtomicBoolean(false);
+        var productFile = new AtomicReference<Path>();
+        var count = new AtomicInteger(0);
+
+        Files.walk(executableTempDirectory).forEach(path ->
         {
-            ApplicationHelpers.Log(LogMessage.Error("Cannot find or parse video download metadata. This is required to move the file to the data directory"));
-            return null;
-        }
+            if (path.toFile().isDirectory())
+                return;
 
-        // Get the resulting video file extension from the returned metadata
-        var videoFileName = metadata.id + "." + metadata.ext;
-        var videoFile = Path.of(executableTempDirectory.toString(), videoFileName);
+            if (path.toString().endsWith(".info.json"))
+                metadataFileFound.set(true);
 
-        // Failure: Missing file(s)
-        if (!Files.exists(videoFile))
+            else
+                productFile.set(path);
+
+            count.incrementAndGet();
+        });
+
+        // Validation Failure:  File count, Product File, Metadata File
+        //
+        if (count.get() != 2 ||
+            productFile.get() == null ||
+            !metadataFileFound.get())
         {
-            ApplicationHelpers.Log(LogMessage.Error("Missing video metadata file (from yt-dlp output directory):  " + videoFile.toString()));
+            ApplicationHelpers.Log(LogMessage.Error("Invalid file output (from yt-dlp output directory)"));
             return null;
         }
 
         // Move Video File:  bin -> Youtube Data Directory (user)
         //
         var youtubeDirectory = ApplicationHelpers.ResolvePath(this.configuration.youtubeDataDirectory);
-        var destinationFile = Path.of(youtubeDirectory.toString(), videoFileName);
+        var destinationFile = Path.of(youtubeDirectory.toString(), productFile.get().getFileName().toString());
 
-        return Files.move(videoFile, destinationFile , StandardCopyOption.REPLACE_EXISTING);
+        return Files.move(productFile.get(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /// Parses video metadata file from the executable temp directory and returns the result. This may be used in

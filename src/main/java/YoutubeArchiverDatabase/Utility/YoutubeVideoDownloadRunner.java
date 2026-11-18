@@ -9,7 +9,7 @@ import java.nio.file.Path;
 public class YoutubeVideoDownloadRunner extends YoutubeDownloaderRunner<Path, String>
 {
     private static final String EXECUTE_VIDEO_DOWNLOAD_TEMPLATE = "--js-runtimes node --cookies-from-browser firefox --remote-components ejs:github " +
-                                                                    "--write-info-json -o %(id)s.json {videoId}";
+                                                                    "--write-info-json {videoId}";
 
     private String videoId;
 
@@ -55,7 +55,7 @@ public class YoutubeVideoDownloadRunner extends YoutubeDownloaderRunner<Path, St
 
         try
         {
-            return VerifyAndMoveVideoResult(executableTempDirectory);
+            return VerifyAndMoveProduct(executableTempDirectory);
         }
         catch (Exception e)
         {

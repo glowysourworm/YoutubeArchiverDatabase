@@ -96,7 +96,10 @@ public class YoutubeVideoSubtitlesRunner extends YoutubeDownloaderRunner<List<Su
                         .toArray();
 
                 if (fields.length != 3)
-                    throw new Exception("Invalid subtitles file:  fields expected (Language, Name, Formats) (probably a white space issue)");
+                {
+                    //throw new Exception("Invalid subtitles file:  fields expected (Language, Name, Formats) (probably a white space issue)");
+                    continue;
+                }
 
                 if (counter++ == 0)
                     continue;
