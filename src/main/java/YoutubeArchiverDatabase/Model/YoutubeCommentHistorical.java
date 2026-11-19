@@ -6,7 +6,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "youtubecommenthistorical", schema = "youtubearchiver")
-public class YoutubeCommentHistorical {
+public class YoutubeCommentHistorical extends YoutubeArchiverEntityBase
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -73,6 +74,12 @@ public class YoutubeCommentHistorical {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public String getName()
+    {
+        return "YoutubeCommentHistorical@" + getId();
     }
 
 }

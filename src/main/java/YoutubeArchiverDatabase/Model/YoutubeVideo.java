@@ -3,11 +3,11 @@ package YoutubeArchiverDatabase.Model;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.util.Objects;
 
 @Entity
 @Table(name = "youtubevideo", schema = "youtubearchiver")
-public class YoutubeVideo {
+public class YoutubeVideo extends YoutubeArchiverEntityBase
+{
     @Id
     @Column(name = "id", nullable = false, length = 100)
     private String id;
@@ -140,5 +140,11 @@ public class YoutubeVideo {
 
     public void setDateDeletedOnline(Instant dateDeletedOnline) {
         this.dateDeletedOnline = dateDeletedOnline;
+    }
+
+    @Override
+    public String getName()
+    {
+        return getTitle();
     }
 }

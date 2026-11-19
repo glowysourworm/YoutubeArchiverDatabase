@@ -6,7 +6,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "localcomment", schema = "youtubearchiver")
-public class LocalComment {
+public class LocalComment extends YoutubeArchiverEntityBase
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -134,4 +135,9 @@ public class LocalComment {
         this.text = text;
     }
 
+    @Override
+    public String getName()
+    {
+        return "LocalComment@" + getId();
+    }
 }

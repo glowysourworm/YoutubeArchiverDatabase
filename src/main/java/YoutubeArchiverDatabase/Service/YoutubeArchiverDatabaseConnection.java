@@ -4,21 +4,38 @@ import YoutubeArchiverDatabase.Configuration;
 import YoutubeArchiverDatabase.Logging.LogMessage;
 import YoutubeArchiverDatabase.Model.*;
 import YoutubeArchiverDatabase.Utility.ApplicationHelpers;
+import YoutubeArchiverDatabase.Utility.ClassHelper;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class YoutubeDatabaseConnection
+public class YoutubeArchiverDatabaseConnection
 {
     private final Configuration configuration;
 
-    public YoutubeDatabaseConnection(Configuration config)
+    public YoutubeArchiverDatabaseConnection(Configuration config)
     {
         this.configuration = config;
+    }
+
+    public <T extends YoutubeArchiverEntityBase> List<T> GetEntities()
+    {
+        var result = new AtomicReference<List<T>>();
+        var classHelper = new ClassHelper<T>();
+
+        if (ExecuteDB(session ->{
+
+            var collection = session.getManagedEntities(classHelper.GetClass());
+
+            result.set(collection.stream().toList());
+        }))
+            return result.get();
+
+        return null;
     }
 
     /// Gets a comment from the database

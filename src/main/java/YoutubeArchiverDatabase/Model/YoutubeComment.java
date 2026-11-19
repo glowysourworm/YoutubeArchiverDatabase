@@ -7,7 +7,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "youtubecomment", schema = "youtubearchiver")
-public class YoutubeComment {
+public class YoutubeComment extends YoutubeArchiverEntityBase
+{
     @Id
     @Column(name = "id", nullable = false, length = 100)
     private String id;
@@ -157,4 +158,9 @@ public class YoutubeComment {
         this.text = text;
     }
 
+    @Override
+    public String getName()
+    {
+        return "YoutubeComment@" + getId();
+    }
 }

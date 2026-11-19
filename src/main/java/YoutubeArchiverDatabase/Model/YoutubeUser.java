@@ -10,7 +10,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "youtubeuser", schema = "youtubearchiver")
-public class YoutubeUser {
+public class YoutubeUser extends YoutubeArchiverEntityBase
+{
     @Id
     @Column(name = "id", nullable = false, length = 100)
     private String id;
@@ -51,6 +52,7 @@ public class YoutubeUser {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

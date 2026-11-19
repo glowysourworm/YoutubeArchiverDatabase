@@ -2,11 +2,10 @@ package YoutubeArchiverDatabase.Model;
 
 import jakarta.persistence.*;
 
-import java.util.Objects;
-
 @Entity
 @Table(name = "youtubeuserchannelmap", schema = "youtubearchiver")
-public class YoutubeUserChannelMap {
+public class YoutubeUserChannelMap extends YoutubeArchiverEntityBase
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -44,4 +43,9 @@ public class YoutubeUserChannelMap {
         this.channel = channel;
     }
 
+    @Override
+    public String getName()
+    {
+        return "YoutubeUserChannelMap@" + getId();
+    }
 }

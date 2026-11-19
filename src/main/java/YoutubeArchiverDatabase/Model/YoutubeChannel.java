@@ -9,7 +9,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "youtubechannel", schema = "youtubearchiver")
-public class YoutubeChannel {
+public class YoutubeChannel extends YoutubeArchiverEntityBase
+{
     @Id
     @Column(name = "id", nullable = false, length = 100)
     private String id;
@@ -52,6 +53,7 @@ public class YoutubeChannel {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -131,5 +133,6 @@ public class YoutubeChannel {
     public void setDateDeletedOnline(Instant dateDeletedOnline) {
         this.dateDeletedOnline = dateDeletedOnline;
     }
+
 
 }
