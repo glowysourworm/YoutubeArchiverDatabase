@@ -11,6 +11,9 @@
         <class>YoutubeArchiverDatabase.Model.YoutubeUser</class>
         <class>YoutubeArchiverDatabase.Model.YoutubeUserChannelMap</class>
         <class>YoutubeArchiverDatabase.Model.YoutubeVideo</class>
+        <class>YoutubeArchiverDatabase.Model.UserGroup</class>
+        <class>YoutubeArchiverDatabase.Model.UserGroupUserMap</class>
+        <class>YoutubeArchiverDatabase.Model.YoutubeVideoExtension</class>
         <properties>
             <property name="hibernate.connection.pool_size" value="10" />
             <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver" />

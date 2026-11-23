@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS `localcomment` (
   `videoId` varchar(100) DEFAULT NULL,
   `commentId` varchar(100) DEFAULT NULL COMMENT 'This is implicitly a youtube comment id. The local comment is not, itself, a comment tree.',
   `dateCreated` datetime NOT NULL,
-  `dateModified` datetime NOT NULL,
+  `dateModified` datetime DEFAULT NULL COMMENT 'Null indicates first instance',
   `suspicious` bit(1) NOT NULL,
   `malicious` bit(1) NOT NULL,
-  `deleted` bit(1) DEFAULT NULL,
+  `deleted` bit(1) NOT NULL,
   `text` varchar(10000) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `User_FK` (`userId`),
@@ -47,6 +47,36 @@ CREATE TABLE IF NOT EXISTS `localcomment` (
 
 -- Data exporting was unselected.
 
+-- Dumping structure for table YoutubeArchiver.usergroup
+DROP TABLE IF EXISTS `usergroup`;
+CREATE TABLE IF NOT EXISTS `usergroup` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `dateCreated` datetime NOT NULL,
+  `dateModified` datetime DEFAULT NULL COMMENT 'Null indicates first instance',
+  `deleted` bit(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Local collection of users associated with a video or channel.';
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table YoutubeArchiver.usergroupusermap
+DROP TABLE IF EXISTS `usergroupusermap`;
+CREATE TABLE IF NOT EXISTS `usergroupusermap` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` varchar(100) NOT NULL,
+  `userGroupId` int(11) NOT NULL,
+  `isLeader` bit(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `UserGroupMap_User_FK` (`userId`),
+  KEY `UserGroupMap_UserGroup_FK` (`userGroupId`),
+  CONSTRAINT `UserGroupMap_UserGroup_FK` FOREIGN KEY (`userGroupId`) REFERENCES `usergroup` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `UserGroupMap_User_FK` FOREIGN KEY (`userId`) REFERENCES `youtubeuser` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Maps users to user groups (many to many)';
+
+-- Data exporting was unselected.
+
 -- Dumping structure for table YoutubeArchiver.youtubechannel
 DROP TABLE IF EXISTS `youtubechannel`;
 CREATE TABLE IF NOT EXISTS `youtubechannel` (
@@ -54,12 +84,14 @@ CREATE TABLE IF NOT EXISTS `youtubechannel` (
   `name` varchar(500) NOT NULL,
   `imageURL` varchar(3000) DEFAULT NULL,
   `description` varchar(10000) DEFAULT NULL,
+  `followerCount` int(11) DEFAULT NULL,
+  `verified` bit(1) DEFAULT NULL,
   `hashValue` varchar(1000) NOT NULL COMMENT 'etag or computed hash value',
   `apiCreated` bit(1) NOT NULL,
   `deleted` bit(1) NOT NULL,
   `deletedOnline` bit(1) NOT NULL,
   `dateCreated` datetime NOT NULL,
-  `dateModified` datetime NOT NULL,
+  `dateModified` datetime DEFAULT NULL COMMENT 'Null indicates first instance',
   `dateDeletedOnline` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
@@ -75,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `youtubecomment` (
   `channelId` varchar(100) NOT NULL,
   `videoId` varchar(100) NOT NULL DEFAULT '',
   `dateCreated` datetime NOT NULL,
-  `dateModified` datetime NOT NULL,
+  `dateModified` datetime DEFAULT NULL COMMENT 'Null indicates first instance',
   `dateDeletedOnline` datetime DEFAULT NULL,
   `apiCreated` bit(1) NOT NULL,
   `deleted` bit(1) NOT NULL,
@@ -113,16 +145,19 @@ CREATE TABLE IF NOT EXISTS `youtubecommenthistorical` (
 DROP TABLE IF EXISTS `youtubeuser`;
 CREATE TABLE IF NOT EXISTS `youtubeuser` (
   `id` varchar(100) NOT NULL,
+  `ownedChannelId` varchar(100) DEFAULT NULL COMMENT 'User''s channel (owned)',
   `name` varchar(100) NOT NULL,
   `userIconURL` varchar(3000) DEFAULT NULL,
   `apiCreated` bit(1) NOT NULL,
   `deleted` bit(1) NOT NULL,
   `deletedOnline` bit(1) NOT NULL,
   `dateCreated` datetime NOT NULL,
-  `dateModified` datetime NOT NULL,
+  `dateModified` datetime DEFAULT NULL COMMENT 'Null indicates first instance',
   `dateDeletedOnline` datetime DEFAULT NULL,
   `hashValue` varchar(1000) NOT NULL DEFAULT '' COMMENT 'etag or computed application value',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `User_Channel_FK` (`ownedChannelId`),
+  CONSTRAINT `User_Channel_FK` FOREIGN KEY (`ownedChannelId`) REFERENCES `youtubechannel` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='This is a local collection of user data based on return values from the youtube google api.';
 
 -- Data exporting was unselected.
@@ -147,10 +182,10 @@ DROP TABLE IF EXISTS `youtubevideo`;
 CREATE TABLE IF NOT EXISTS `youtubevideo` (
   `id` varchar(100) NOT NULL,
   `channelId` varchar(100) NOT NULL,
-  `title` varchar(1000) DEFAULT NULL,
+  `title` varchar(100) DEFAULT NULL,
+  `fullTitle` varchar(300) DEFAULT NULL,
   `imageURL` varchar(3000) DEFAULT NULL,
-  `hashValue` varchar(1000) NOT NULL,
-  `description` varchar(10000) DEFAULT NULL,
+  `hashValue` varchar(1000) NOT NULL COMMENT 'Independent of extension hash value',
   `apiCreated` bit(1) NOT NULL,
   `deleted` bit(1) NOT NULL,
   `deletedOnline` bit(1) NOT NULL,
@@ -161,6 +196,28 @@ CREATE TABLE IF NOT EXISTS `youtubevideo` (
   KEY `VIDEO_CHANNEL_FK` (`channelId`),
   CONSTRAINT `VIDEO_CHANNEL_FK` FOREIGN KEY (`channelId`) REFERENCES `youtubechannel` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table YoutubeArchiver.youtubevideoextension
+DROP TABLE IF EXISTS `youtubevideoextension`;
+CREATE TABLE IF NOT EXISTS `youtubevideoextension` (
+  `videoId` varchar(100) NOT NULL,
+  `duration` time DEFAULT NULL,
+  `viewCount` int(11) DEFAULT NULL,
+  `likeCount` int(11) DEFAULT NULL,
+  `commentCount` int(11) DEFAULT NULL,
+  `isLive` bit(1) DEFAULT NULL,
+  `wasLive` bit(1) DEFAULT NULL,
+  `isDownloaded` bit(1) DEFAULT NULL,
+  `isAudioOnlyDownload` bit(1) DEFAULT NULL,
+  `formatExtension` varchar(30) DEFAULT NULL,
+  `fullTitle` varchar(300) DEFAULT NULL,
+  `fileName` varchar(300) DEFAULT NULL,
+  `description` varchar(10000) DEFAULT NULL,
+  PRIMARY KEY (`videoId`),
+  CONSTRAINT `VideoExtension_Video_FK` FOREIGN KEY (`videoId`) REFERENCES `youtubevideo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='Extended properties for youtube video entities';
 
 -- Data exporting was unselected.
 
