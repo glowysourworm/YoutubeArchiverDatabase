@@ -8,7 +8,6 @@
             <property name="hibernate.connection.pool_size" value="10" />
             <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver" />
             <property name="show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="update" />
             <property name="hibernate.connection.provider_class" value="org.hibernate.c3p0.internal.C3P0ConnectionProvider" />
         </properties>
     </persistence-unit>

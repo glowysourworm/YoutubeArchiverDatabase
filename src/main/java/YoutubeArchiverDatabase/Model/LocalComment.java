@@ -8,44 +8,49 @@ import java.time.Instant;
 @Table(name = "localcomment", schema = "youtubearchiver")
 public class LocalComment extends YoutubeArchiverEntityBase
 {
+    public LocalComment()
+    {
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    public Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    private YoutubeUser user;
+    public YoutubeUser user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channelId")
-    private YoutubeChannel channel;
+    public YoutubeChannel channel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "videoId")
-    private YoutubeVideo video;
+    public YoutubeVideo video;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commentId")
-    private YoutubeComment comment;
+    public YoutubeComment comment;
 
     @Column(name = "dateCreated", nullable = false)
-    private Instant dateCreated;
+    public Instant dateCreated;
 
     @Column(name = "dateModified", nullable = false)
-    private Instant dateModified;
+    public Instant dateModified;
 
     @Column(name = "suspicious", nullable = false)
-    private Boolean suspicious;
+    public Boolean suspicious;
 
     @Column(name = "malicious", nullable = false)
-    private Boolean malicious;
+    public Boolean malicious;
 
     @Column(name = "deleted")
-    private Boolean deleted;
+    public Boolean deleted;
 
     @Column(name = "text", length = 10000)
-    private String text;
+    public String text;
 
     public Integer getId() {
         return id;

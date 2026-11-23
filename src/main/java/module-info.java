@@ -1,11 +1,12 @@
 module YoutubeArchiverDatabase {
     requires jakarta.persistence;
-    requires org.hibernate.orm.core;
-    requires tools.jackson.databind;
+    requires jakarta.annotation;
     requires com.google.api.services.youtube;
-    requires google.api.client;
     requires com.google.api.client;
     requires com.google.api.client.json.gson;
+    requires org.hibernate.orm.core;
+    requires tools.jackson.databind;
+    requires google.api.client;
 
     exports YoutubeArchiverDatabase.Model;
     exports YoutubeArchiverDatabase.Service;

@@ -12,37 +12,42 @@ import java.time.Instant;
 @Table(name = "youtubeuser", schema = "youtubearchiver")
 public class YoutubeUser extends YoutubeArchiverEntityBase
 {
+    public YoutubeUser()
+    {
+
+    }
+
     @Id
     @Column(name = "id", nullable = false, length = 100)
-    private String id;
+    public String id;
 
     @Column(name = "name", nullable = false, length = 100)
-    private String name;
+    public String name;
 
     @Column(name = "userIconURL", length = 3000)
-    private String userIconURL;
+    public String userIconURL;
 
     @Column(name = "apiCreated", nullable = false)
-    private Boolean apiCreated;
+    public Boolean apiCreated;
 
     @Column(name = "deleted", nullable = false)
-    private Boolean deleted;
+    public Boolean deleted;
 
     @Column(name = "deletedOnline", nullable = false)
-    private Boolean deletedOnline;
+    public Boolean deletedOnline;
 
     @Column(name = "dateCreated", nullable = false)
-    private Instant dateCreated;
+    public Instant dateCreated;
 
     @Column(name = "dateModified", nullable = false)
-    private Instant dateModified;
+    public Instant dateModified;
 
     @Column(name = "dateDeletedOnline")
-    private Instant dateDeletedOnline;
+    public Instant dateDeletedOnline;
 
     @ColumnDefault("''")
     @Column(name = "hashValue", nullable = false, length = 1000)
-    private String hashValue;
+    public String hashValue;
 
     public String getId() {
         return id;

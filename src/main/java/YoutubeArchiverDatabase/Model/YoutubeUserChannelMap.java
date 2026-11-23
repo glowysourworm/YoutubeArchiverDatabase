@@ -6,18 +6,23 @@ import jakarta.persistence.*;
 @Table(name = "youtubeuserchannelmap", schema = "youtubearchiver")
 public class YoutubeUserChannelMap extends YoutubeArchiverEntityBase
 {
+    public YoutubeUserChannelMap()
+    {
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    public Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
-    private YoutubeUser user;
+    public YoutubeUser user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "channelId", nullable = false)
-    private YoutubeChannel channel;
+    public YoutubeChannel channel;
 
     public Integer getId() {
         return id;

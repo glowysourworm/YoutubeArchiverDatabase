@@ -9,50 +9,55 @@ import java.time.Instant;
 @Table(name = "youtubecomment", schema = "youtubearchiver")
 public class YoutubeComment extends YoutubeArchiverEntityBase
 {
+    public YoutubeComment()
+    {
+
+    }
+
     @Id
     @Column(name = "id", nullable = false, length = 100)
-    private String id;
+    public String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentId")
-    private YoutubeComment parent;
+    public YoutubeComment parent;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
-    private YoutubeUser user;
+    public YoutubeUser user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "channelId", nullable = false)
-    private YoutubeChannel channel;
+    public YoutubeChannel channel;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("''")
     @JoinColumn(name = "videoId", nullable = false)
-    private YoutubeVideo video;
+    public YoutubeVideo video;
 
     @Column(name = "dateCreated", nullable = false)
-    private Instant dateCreated;
+    public Instant dateCreated;
 
     @Column(name = "dateModified", nullable = false)
-    private Instant dateModified;
+    public Instant dateModified;
 
     @Column(name = "dateDeletedOnline")
-    private Instant dateDeletedOnline;
+    public Instant dateDeletedOnline;
 
     @Column(name = "apiCreated", nullable = false)
-    private Boolean apiCreated;
+    public Boolean apiCreated;
 
     @Column(name = "deleted", nullable = false)
-    private Boolean deleted;
+    public Boolean deleted;
 
     @Column(name = "deletedOnline", nullable = false)
-    private Boolean deletedOnline;
+    public Boolean deletedOnline;
 
     @Column(name = "hashValue", nullable = false, length = 1000)
-    private String hashValue;
+    public String hashValue;
 
     @Column(name = "text", length = 10000)
-    private String text;
+    public String text;
 
     public String getId() {
         return id;

@@ -8,25 +8,30 @@ import java.time.Instant;
 @Table(name = "youtubecommenthistorical", schema = "youtubearchiver")
 public class YoutubeCommentHistorical extends YoutubeArchiverEntityBase
 {
+    public YoutubeCommentHistorical()
+    {
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    public Integer id;
 
     @Column(name = "commentId", nullable = false, length = 100)
-    private String commentId;
+    public String commentId;
 
     @Column(name = "dateCreated", nullable = false)
-    private Instant dateCreated;
+    public Instant dateCreated;
 
     @Column(name = "apiCreated", nullable = false)
-    private Boolean apiCreated;
+    public Boolean apiCreated;
 
     @Column(name = "hashValue", nullable = false, length = 1000)
-    private String hashValue;
+    public String hashValue;
 
     @Column(name = "text", length = 10000)
-    private String text;
+    public String text;
 
     public Integer getId() {
         return id;

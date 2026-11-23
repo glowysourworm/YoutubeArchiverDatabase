@@ -115,7 +115,10 @@ public abstract class ShellRunner
         try
         {
             // Create Application Temp Directory
-            this.executableTempDirectory = ApplicationHelpers.ResolvePath(this.executableName);
+            var workingDirectory = ApplicationHelpers.GetWorkingDirectory();
+
+            // {workingDirectory}\{executable temp directory}
+            this.executableTempDirectory = Files.createTempDirectory(workingDirectory, this.executableName);
 
             // Delete Existing Folder
             if (Files.exists(this.executableTempDirectory))
