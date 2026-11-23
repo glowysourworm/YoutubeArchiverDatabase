@@ -18,37 +18,37 @@ public class YoutubeChannel extends YoutubeArchiverEntityBase
 
     @Id
     @Column(name = "id", nullable = false, length = 100)
-    public String id;
+    private String id;
 
     @Column(name = "name", nullable = false, length = 500)
-    public String name;
+    private String name;
 
     @Column(name = "imageURL", length = 3000)
-    public String imageURL;
+    private String imageURL;
 
     @Column(name = "description", length = 10000)
-    public String description;
+    private String description;
 
     @Column(name = "hashValue", nullable = false, length = 1000)
-    public String hashValue;
+    private String hashValue;
 
     @Column(name = "apiCreated", nullable = false)
-    public Boolean apiCreated;
+    private Boolean apiCreated;
 
     @Column(name = "deleted", nullable = false)
-    public Boolean deleted;
+    private Boolean deleted;
 
     @Column(name = "deletedOnline", nullable = false)
-    public Boolean deletedOnline;
+    private Boolean deletedOnline;
 
     @Column(name = "dateCreated", nullable = false)
-    public Instant dateCreated;
+    private Instant dateCreated;
 
     @Column(name = "dateModified", nullable = false)
-    public Instant dateModified;
+    private Instant dateModified;
 
     @Column(name = "dateDeletedOnline")
-    public Instant dateDeletedOnline;
+    private Instant dateDeletedOnline;
 
     public String getId() {
         return id;
@@ -58,7 +58,6 @@ public class YoutubeChannel extends YoutubeArchiverEntityBase
         this.id = id;
     }
 
-    @Override
     public String getName() {
         return name;
     }
@@ -139,5 +138,9 @@ public class YoutubeChannel extends YoutubeArchiverEntityBase
         this.dateDeletedOnline = dateDeletedOnline;
     }
 
-
+    @Override
+    public String GetName()
+    {
+        return this.getName();
+    }
 }

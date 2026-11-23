@@ -15,41 +15,41 @@ public class YoutubeVideo extends YoutubeArchiverEntityBase
 
     @Id
     @Column(name = "id", nullable = false, length = 100)
-    public String id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "channelId", nullable = false)
-    public YoutubeChannel channel;
+    private YoutubeChannel channel;
 
     @Column(name = "title", length = 1000)
-    public String title;
+    private String title;
 
     @Column(name = "imageURL", length = 3000)
-    public String imageURL;
+    private String imageURL;
 
     @Column(name = "hashValue", nullable = false, length = 1000)
-    public String hashValue;
+    private String hashValue;
 
     @Column(name = "description", length = 10000)
-    public String description;
+    private String description;
 
     @Column(name = "apiCreated", nullable = false)
-    public Boolean apiCreated;
+    private Boolean apiCreated;
 
     @Column(name = "deleted", nullable = false)
-    public Boolean deleted;
+    private Boolean deleted;
 
     @Column(name = "deletedOnline", nullable = false)
-    public Boolean deletedOnline;
+    private Boolean deletedOnline;
 
     @Column(name = "dateCreated", nullable = false)
-    public Instant dateCreated;
+    private Instant dateCreated;
 
     @Column(name = "dateModified", nullable = false)
-    public Instant dateModified;
+    private Instant dateModified;
 
     @Column(name = "dateDeletedOnline")
-    public Instant dateDeletedOnline;
+    private Instant dateDeletedOnline;
 
     public String getId() {
         return id;
@@ -148,8 +148,8 @@ public class YoutubeVideo extends YoutubeArchiverEntityBase
     }
 
     @Override
-    public String getName()
+    public String GetName()
     {
-        return getTitle();
+        return this.getTitle();
     }
 }

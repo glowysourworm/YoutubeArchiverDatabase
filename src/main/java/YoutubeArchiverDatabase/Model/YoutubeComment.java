@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "youtubecomment", schema = "youtubearchiver")
-public class YoutubeComment extends YoutubeArchiverEntityBase
+public class YoutubeComment  extends YoutubeArchiverEntityBase
 {
     public YoutubeComment()
     {
@@ -16,48 +16,48 @@ public class YoutubeComment extends YoutubeArchiverEntityBase
 
     @Id
     @Column(name = "id", nullable = false, length = 100)
-    public String id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentId")
-    public YoutubeComment parent;
+    private YoutubeComment parent;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
-    public YoutubeUser user;
+    private YoutubeUser user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "channelId", nullable = false)
-    public YoutubeChannel channel;
+    private YoutubeChannel channel;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ColumnDefault("''")
     @JoinColumn(name = "videoId", nullable = false)
-    public YoutubeVideo video;
+    private YoutubeVideo video;
 
     @Column(name = "dateCreated", nullable = false)
-    public Instant dateCreated;
+    private Instant dateCreated;
 
     @Column(name = "dateModified", nullable = false)
-    public Instant dateModified;
+    private Instant dateModified;
 
     @Column(name = "dateDeletedOnline")
-    public Instant dateDeletedOnline;
+    private Instant dateDeletedOnline;
 
     @Column(name = "apiCreated", nullable = false)
-    public Boolean apiCreated;
+    private Boolean apiCreated;
 
     @Column(name = "deleted", nullable = false)
-    public Boolean deleted;
+    private Boolean deleted;
 
     @Column(name = "deletedOnline", nullable = false)
-    public Boolean deletedOnline;
+    private Boolean deletedOnline;
 
     @Column(name = "hashValue", nullable = false, length = 1000)
-    public String hashValue;
+    private String hashValue;
 
     @Column(name = "text", length = 10000)
-    public String text;
+    private String text;
 
     public String getId() {
         return id;
@@ -164,8 +164,9 @@ public class YoutubeComment extends YoutubeArchiverEntityBase
     }
 
     @Override
-    public String getName()
+    public String GetName()
     {
-        return "YoutubeComment@" + getId();
+        return this.getId();
     }
+
 }

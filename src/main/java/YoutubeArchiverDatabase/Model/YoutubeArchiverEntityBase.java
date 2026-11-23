@@ -1,5 +1,8 @@
 package YoutubeArchiverDatabase.Model;
 
+import jakarta.persistence.MappedSuperclass;
+
+@MappedSuperclass
 public abstract class YoutubeArchiverEntityBase
 {
     public YoutubeArchiverEntityBase()
@@ -7,5 +10,5 @@ public abstract class YoutubeArchiverEntityBase
 
     }
 
-    public abstract String getName();
+    public abstract String GetName();
 }

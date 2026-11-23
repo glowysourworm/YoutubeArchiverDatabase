@@ -16,41 +16,41 @@ public class LocalComment extends YoutubeArchiverEntityBase
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    public Integer id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    public YoutubeUser user;
+    private YoutubeUser user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channelId")
-    public YoutubeChannel channel;
+    private YoutubeChannel channel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "videoId")
-    public YoutubeVideo video;
+    private YoutubeVideo video;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commentId")
-    public YoutubeComment comment;
+    private YoutubeComment comment;
 
     @Column(name = "dateCreated", nullable = false)
-    public Instant dateCreated;
+    private Instant dateCreated;
 
     @Column(name = "dateModified", nullable = false)
-    public Instant dateModified;
+    private Instant dateModified;
 
     @Column(name = "suspicious", nullable = false)
-    public Boolean suspicious;
+    private Boolean suspicious;
 
     @Column(name = "malicious", nullable = false)
-    public Boolean malicious;
+    private Boolean malicious;
 
     @Column(name = "deleted")
-    public Boolean deleted;
+    private Boolean deleted;
 
     @Column(name = "text", length = 10000)
-    public String text;
+    private String text;
 
     public Integer getId() {
         return id;
@@ -141,8 +141,9 @@ public class LocalComment extends YoutubeArchiverEntityBase
     }
 
     @Override
-    public String getName()
+    public String GetName()
     {
-        return "LocalComment@" + getId();
+        return this.getId().toString();
     }
+
 }

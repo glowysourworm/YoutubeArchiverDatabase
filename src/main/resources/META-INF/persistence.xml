@@ -4,6 +4,13 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
     <persistence-unit name="default">
+        <class>YoutubeArchiverDatabase.Model.LocalComment</class>
+        <class>YoutubeArchiverDatabase.Model.YoutubeChannel</class>
+        <class>YoutubeArchiverDatabase.Model.YoutubeComment</class>
+        <class>YoutubeArchiverDatabase.Model.YoutubeCommentHistorical</class>
+        <class>YoutubeArchiverDatabase.Model.YoutubeUser</class>
+        <class>YoutubeArchiverDatabase.Model.YoutubeUserChannelMap</class>
+        <class>YoutubeArchiverDatabase.Model.YoutubeVideo</class>
         <properties>
             <property name="hibernate.connection.pool_size" value="10" />
             <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver" />

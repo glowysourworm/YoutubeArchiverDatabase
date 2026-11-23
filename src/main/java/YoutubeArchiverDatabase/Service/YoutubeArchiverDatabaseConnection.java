@@ -6,6 +6,7 @@ import YoutubeArchiverDatabase.Model.*;
 import YoutubeArchiverDatabase.Utility.ApplicationHelpers;
 import YoutubeArchiverDatabase.Utility.ClassHelper;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.Closeable;
@@ -17,11 +18,24 @@ import java.util.function.Consumer;
 
 public class YoutubeArchiverDatabaseConnection implements AutoCloseable
 {
+    // Application Configuration
     private final Configuration configuration;
+
+    // Hibernate:  Session Factory
+    //
+    //             1) Thread Safe
+    //             2) Keep alive for the application, close on shutdown
+    //             3) Create session instances (not thread safe)
+    //
+    // We'll use a null-reference to indicate that it needs to be opened the
+    // first time. Then, it may be used to create sessions.
+    //
+    private SessionFactory sessionFactory;
 
     public YoutubeArchiverDatabaseConnection(Configuration config)
     {
         this.configuration = config;
+        this.sessionFactory = null;
     }
 
     public <T extends YoutubeArchiverEntityBase> List<T> GetEntities()
@@ -271,19 +285,36 @@ public class YoutubeArchiverDatabaseConnection implements AutoCloseable
 
     public boolean ExecuteDB(Consumer<Session> callback)
     {
-        // Create Session (+Factory) and auto-close with try-with-resources.
-        try(var session = OpenDB())
+        // Create SessionFactory and auto-close with try-with-resources.
+        try
         {
-            // Logging already happened
-            if (session == null)
-                return false;
+            // Open / Retrieve Session Factory
+            var factory = OpenDB();
 
+            if (factory == null)
+            {
+                ApplicationHelpers.Log(LogMessage.Error("Database connection error! Please check application configuration"));
+                return false;
+            }
+
+            ApplicationHelpers.Log(LogMessage.Info("Opening database session..."));
+
+            var session = factory.openSession();
+
+            if (!session.isOpen())
+            {
+                ApplicationHelpers.Log(LogMessage.Info("Database session open failed:  " + session.toString()));
+                return false;
+            }
+
+            ApplicationHelpers.Log(LogMessage.Info("Database transaction started:  " + session.toString()));
             session.beginTransaction();
 
             // Execute User Code
             callback.accept(session);
 
             session.getTransaction().commit();
+            ApplicationHelpers.Log(LogMessage.Info("Database transaction completed:  " + session.toString()));
 
             return true;
         }
@@ -294,8 +325,12 @@ public class YoutubeArchiverDatabaseConnection implements AutoCloseable
         }
     }
 
-    private Session OpenDB()
+    private SessionFactory OpenDB() throws Exception
     {
+        // Session Factory
+        if (this.sessionFactory != null)
+            return this.sessionFactory;
+
         // Configuration:  Some parts are in hibernate.cfg.xml. The other parts that depend on
         //                 user settings are applied here.
         //
@@ -331,6 +366,8 @@ public class YoutubeArchiverDatabaseConnection implements AutoCloseable
             configuration.addAnnotatedClass(YoutubeUserChannelMap.class);
             configuration.addAnnotatedClass(YoutubeVideo.class);
 
+            this.sessionFactory = configuration.buildSessionFactory();
+
             ApplicationHelpers.Log(LogMessage.Info("Database configuration complete!"));
         }
         catch (Exception e)
@@ -339,26 +376,7 @@ public class YoutubeArchiverDatabaseConnection implements AutoCloseable
             return null;
         }
 
-        try(var sessionFactory = configuration.buildSessionFactory())
-        {
-            ApplicationHelpers.Log(LogMessage.Info("Opening database session..."));
-
-            var session = sessionFactory.openSession();
-
-            if (session != null)
-                ApplicationHelpers.Log(LogMessage.Info("Database session open successfully:  " + session.toString()));
-
-            else
-                ApplicationHelpers.Log(LogMessage.Info("Unknown error creating database session!"));
-
-            return session;
-        }
-        catch (Exception e)
-        {
-            ApplicationHelpers.Log(LogMessage.Error("Error creating database session", e));
-        }
-
-        return null;
+        return this.sessionFactory;
     }
 
     /**

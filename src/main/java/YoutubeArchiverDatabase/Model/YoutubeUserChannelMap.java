@@ -14,15 +14,15 @@ public class YoutubeUserChannelMap extends YoutubeArchiverEntityBase
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    public Integer id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
-    public YoutubeUser user;
+    private YoutubeUser user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "channelId", nullable = false)
-    public YoutubeChannel channel;
+    private YoutubeChannel channel;
 
     public Integer getId() {
         return id;
@@ -49,8 +49,8 @@ public class YoutubeUserChannelMap extends YoutubeArchiverEntityBase
     }
 
     @Override
-    public String getName()
+    public String GetName()
     {
-        return "YoutubeUserChannelMap@" + getId();
+        return this.getId().toString();
     }
 }

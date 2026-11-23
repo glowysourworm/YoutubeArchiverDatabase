@@ -16,22 +16,22 @@ public class YoutubeCommentHistorical extends YoutubeArchiverEntityBase
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    public Integer id;
+    private Integer id;
 
     @Column(name = "commentId", nullable = false, length = 100)
-    public String commentId;
+    private String commentId;
 
     @Column(name = "dateCreated", nullable = false)
-    public Instant dateCreated;
+    private Instant dateCreated;
 
     @Column(name = "apiCreated", nullable = false)
-    public Boolean apiCreated;
+    private Boolean apiCreated;
 
     @Column(name = "hashValue", nullable = false, length = 1000)
-    public String hashValue;
+    private String hashValue;
 
     @Column(name = "text", length = 10000)
-    public String text;
+    private String text;
 
     public Integer getId() {
         return id;
@@ -82,9 +82,8 @@ public class YoutubeCommentHistorical extends YoutubeArchiverEntityBase
     }
 
     @Override
-    public String getName()
+    public String GetName()
     {
-        return "YoutubeCommentHistorical@" + getId();
+        return this.getCommentId();
     }
-
 }
